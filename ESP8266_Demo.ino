@@ -7,9 +7,7 @@
  
 #include "ESP8266WiFi.h"
 #include <dht.h>
-
-const char* ssid     = "volvo";        // Nom du reseau
-const char* password = "12345678";
+#include "pwd.h" //ssid & password in separate file
 
 dht DHT;            /* Create DHT object */
 #define DHT11_PIN 5 //The data I/O pin connected to the DHT11 sensor : GPIO5 = D1 of NodeMCU ESP8266 Board
