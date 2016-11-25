@@ -14,6 +14,10 @@ dht DHT;            /* Create DHT object */
 
 WiFiServer server(80); //declare a web server running on port 80
 
+// variable pour stocker valeur lue par sensor
+int humidity_DHT;
+int temperature_DHT;
+
 void setup() {
   Serial.begin(115200);
 
@@ -327,11 +331,16 @@ void temperature() {
   // READ DATA
   Serial.print("DHT11, \t");
   int chk = DHT.read11(DHT11_PIN);
+  
+  Serial.print(chk);
+  Serial.print(",\t");
+  humidity_DHT = DHT.humidity;
+  temperature_DHT = DHT.temperature;
 
   // DISPLAY DATA
-  Serial.print(DHT.humidity, 1);
+  Serial.print(humidity_DHT, 1);
   Serial.print(",\t");
-  Serial.println(DHT.temperature, 1);
+  Serial.println(temperature_DHT, 1);
 
 }
 
@@ -341,6 +350,8 @@ void webServer() {
   server.begin();
   Serial.println("Server started");
 
+  temperature();
+  
   while (true)
   { 
     WiFiClient client;
@@ -383,10 +394,18 @@ void webServer() {
     s += "</head>";
     s += "<div class=\"container\">";
     s += "<h1>Lamp Control</h1>";
+    s += "<p><br/>Capteur temperature DHT 11:<br/> ";
+    s += humidity_DHT;
+    s += " %  ";
+    s += temperature_DHT;
+    s += " C";
+    s += "</p><br/>";
     s += "<div class=\"row\">";
-    s += "<div class=\"col-md-2\"><input class=\"btn btn-block btn-lg btn-primary\" type=\"button\" value=\"On\" onclick=\"on()\"></div>";
-    s += "<div class=\"col-md-2\"><input class=\"btn btn-block btn-lg btn-danger\" type=\"button\" value=\"Off\" onclick=\"off()\"></div>";
-    s += "<div class=\"col-md-2\"><input class=\"btn btn-block btn-lg btn-info\" type=\"button\" value=\"Quitter\" onclick=\"quitter()\"></div>";
+    s += "<div class=\"col-xs-6\"><input class=\"btn btn-block btn-lg btn-primary\" type=\"button\" value=\"On\" onclick=\"on()\"></div>";
+    s += "<div class=\"col-xs-6\"><input class=\"btn btn-block btn-lg btn-danger\" type=\"button\" value=\"Off\" onclick=\"off()\"></div>";
+    s += "</div>";
+    s += "<div class=\"row\">";
+    s += "<div class=\"col-md-4\"><input class=\"btn btn-block btn-lg btn-success\" type=\"button\" value=\"Quitter\" onclick=\"quitter()\"></div>";
     s += "</div></div>";
     s += "<script>function on() {$.get(\"/on\");}</script>";
     s += "<script>function off() {$.get(\"/off\");}</script>";
