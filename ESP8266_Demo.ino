@@ -89,6 +89,12 @@ void loop() {
           Serial.println("=> Command 8 Done");
           break;
 
+        case 9:
+          Serial.println(" = read current time from internet");
+          Serial.println(getTime());
+          Serial.println("=> Command 9 Done");
+          break;
+
         default:
           Serial.println(" => Command not found");
           break;
@@ -111,6 +117,7 @@ void listRequestAvailable() {
   Serial.println("  6 = temperature");
   Serial.println("  7 = temperature en boucle (entrez un caractère pour arrêter");
   Serial.println("  8 = Web Serveur to control LED");
+  Serial.println("  9 = Read current time from internet");
 }
 
 void scanWifi() {
@@ -429,3 +436,35 @@ void webServer() {
   }
 }
 
+
+String getTime() {
+  WiFiClient client;
+  while (!client.connect("google.com", 80)) {
+    Serial.println("connection failed, retrying...");
+  }
+
+  client.print("HEAD / HTTP/1.1\r\n\r\n");
+ 
+  while(!client.available()) {
+     yield();
+  }
+
+  while(client.available()){
+    if (client.read() == '\n') {   
+      if (client.read() == 'D') {   
+        if (client.read() == 'a') {   
+          if (client.read() == 't') {   
+            if (client.read() == 'e') {   
+              if (client.read() == ':') {   
+                client.read();
+                String theDate = client.readStringUntil('\r');
+                client.stop();
+                return theDate;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
