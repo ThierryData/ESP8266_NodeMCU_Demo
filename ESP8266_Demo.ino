@@ -379,6 +379,9 @@ void webServer() {
     else if (req.indexOf("/off") != -1) {
       digitalWrite(LED_BUILTIN, HIGH);
     }
+    else if (req.indexOf("/refresh") != -1) {
+      temperature();
+    }
     else if (req.indexOf("/quitter") != -1) {
       return;
     }
@@ -401,15 +404,20 @@ void webServer() {
     s += " C";
     s += "</p><br/>";
     s += "<div class=\"row\">";
+    s += "<div class=\"col-md-4\"><input class=\"btn btn-block btn-lg btn-info\" type=\"button\" value=\"Refresh\" onclick=\"Refresh()\"></div>";
+    s += "<div class=\"row\">";
+    s += "<div class=\"row\">";
     s += "<div class=\"col-xs-6\"><input class=\"btn btn-block btn-lg btn-primary\" type=\"button\" value=\"On\" onclick=\"on()\"></div>";
     s += "<div class=\"col-xs-6\"><input class=\"btn btn-block btn-lg btn-danger\" type=\"button\" value=\"Off\" onclick=\"off()\"></div>";
     s += "</div>";
     s += "<div class=\"row\">";
     s += "<div class=\"col-md-4\"><input class=\"btn btn-block btn-lg btn-success\" type=\"button\" value=\"Quitter\" onclick=\"quitter()\"></div>";
     s += "</div></div>";
+    s += "<script>function Refresh() {$.get(\"/refresh\");setTimeout(reloadpage, 500);}</script>";
     s += "<script>function on() {$.get(\"/on\");}</script>";
     s += "<script>function off() {$.get(\"/off\");}</script>";
     s += "<script>function quitter() {$.get(\"/quitter\");}</script>";
+    s += "<script>function reloadpage() {window.location.reload();}</script>";
     
     // Send the response to the client
     client.print(s);
